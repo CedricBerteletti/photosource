@@ -8,7 +8,8 @@ import logging
 
 from PyQt6.QtWidgets import QFrame, QPushButton, QTextEdit, QHBoxLayout, QVBoxLayout, QStyle
 
-from services.processor import ProcessorService, PROCESS_DEFAULT_ID, PROCESS_DEFAULT_TEMPLATE_PATH
+from services.processor import ProcessorService, PROCESS_DEFAULT_ID, VERSION_TAG
+import services.settings as settings
 from ui.ui_utils import set_default_layout_params
 
 
@@ -69,6 +70,7 @@ class ProcessEditor(QFrame):
     def text_changed(self):
         self.image.process_result = self.textedit.toPlainText()
         with open(self.image.result_script_path(), "w") as file:
+            file.write(f"{VERSION_TAG} {settings.get("photosource.version")}")
             file.write(self.image.process_result)
 
 

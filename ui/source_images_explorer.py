@@ -14,20 +14,20 @@ from PyQt6.QtWidgets import  QStyle, QFileDialog, QFrame, QScrollArea, QPushButt
 from services.internationalization import l
 from services.mipmaps import MipmapLevels, MipmapService
 import services.settings as settings
-from services.states import ImageState
+from services.states.image_state import ImageState
 from ui.image_vignette import ImageVignette
 from ui.ui_utils import set_default_layout_params
 
 
 
-class FolderExplorer(QFrame):
+class SourceImagesExplorer(QFrame):
     "Displays the image present in a folder"
 
     imageSelected = pyqtSignal(ImageState)
 
     def __init__(self):
         super().__init__()
-        self.folderpath = ""
+        self.imagespath = ""
         self.images = []
         self.scrollContent = None
         self.init_ui()
@@ -49,7 +49,7 @@ class FolderExplorer(QFrame):
         icon = self.style().standardIcon(pixmapi)
         home_button = QPushButton(icon, "")
         self.toolbar.layout().addWidget(home_button)
-        home_button.clicked.connect(self.select_folder)
+        home_button.clicked.connect(self.select_path)
 
         # Toolbar - END
         self.toolbar.layout().addStretch()
@@ -68,24 +68,23 @@ class FolderExplorer(QFrame):
             new_nb_columns = self.nb_columns_possible()
             if new_nb_columns != self.nb_columns:
                 self.init_scroll_content()
-        return super(FolderExplorer, self).resizeEvent(event)
+        return super(SourceImagesExplorer, self).resizeEvent(event)
 
 
-    def select_folder(self):
-        self.folderpath = QFileDialog.getExistingDirectory(self, l("msg.select_folder"))
+    def select_path(self):
+        self.imagespath = QFileDialog.getExistingDirectory(self, l("msg.select_images"))
         self.init_images()
         self.init_scroll_content()
 
 
-    def init_images(self):
-        self.images = []
-        
-        if self.folderpath:
-            logging.info(f"New source folder : {self.folderpath}")
-            files = [f for f in listdir(self.folderpath) if isfile(join(self.folderpath, f))]
+    def init_images(self):        
+        if self.imagespath:
+            self.images = []
+            logging.info(f"New source folder : {self.imagespath}")
+            files = [f for f in listdir(self.imagespath) if isfile(join(self.imagespath, f))]
 
             for f in files:
-                image_path = join(self.folderpath, f)
+                image_path = join(self.imagespath, f)
                 image = ImageState(image_path)
                 self.images.append(image)
 

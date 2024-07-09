@@ -8,12 +8,12 @@ from os import makedirs
 from os.path import join, dirname, basename, splitext, isfile
 
 from services.mipmaps import MipmapService, MipmapLevels, DEFAULT_IMAGE_FORMAT
-from services.processor import PROCESS_DEFAULT_ID
+from services.processor import PROCESS_DEFAULT_ID, LINE_SEP, VERSION_TAG
 import services.settings as settings
 
 
 class ImageState():
-    def __init__(self, original_image_path, process_id="", preview_id="", mipmap=MipmapLevels.FULL):
+    def __init__(self, original_image_path, process_id="", preview_id="", mipmap=MipmapLevels.FULL, format=DEFAULT_IMAGE_FORMAT):
         super().__init__()
         self.original_image_path = original_image_path
         self.process_id = process_id
@@ -21,14 +21,19 @@ class ImageState():
         self.preview_name = ""
         self.preview_group = ""
         self.mipmap = mipmap
+        self.format = format
         self.process_editing = ""
         self.process_result = ""
         
-        # Load processing script if exists
+        # Load processing scripts if exists
         script_path = self.result_script_path()
         if isfile(script_path):
             with open(script_path, "r") as file:
-                self.process_result = file.read()
+                filedata = file.read()
+                lines = filedata.split(LINE_SEP)
+                for line in lines:
+                    if VERSION_TAG not in line:
+                        self.process_result = self.process_result + LINE_SEP + line
 
     
     def get_original_basename(self):
@@ -49,15 +54,15 @@ class ImageState():
         return isfile(self.mipmap_path())
 
     
-    def mipmap_path(self, extension=DEFAULT_IMAGE_FORMAT):
+    def mipmap_path(self):
         "Return the mipmap path"
-        if not self.preview_id and self.mipmap == MipmapLevels.FULL:
+        if not self.preview_id and self.mipmap == MipmapLevels.FULL and not self.format:
             # Original image
             directory = self.get_original_folder()
             ext = self.get_original_extension()
         else:
             directory = self.temp_folder()
-            ext = extension
+            ext = self.format
         
         suffix = ""
         if self.process_id:

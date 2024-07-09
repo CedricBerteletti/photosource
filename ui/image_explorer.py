@@ -10,6 +10,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QScrollArea, QVBoxLayout
 
 from services.mipmaps import MipmapService, MipmapLevels
+from services.states.image_state import DEFAULT_IMAGE_FORMAT
 from ui.image_simple import SimpleImage
 from ui.ui_utils import set_default_layout_params
 
@@ -25,6 +26,7 @@ class ImageExplorer(QFrame):
     def set_image(self, image):
         self.image = copy.copy(image)
         self.image.mipmap = MipmapLevels.SCREEN
+        self.image.format = DEFAULT_IMAGE_FORMAT
         self.init_image()
 
 
@@ -47,6 +49,6 @@ class ImageExplorer(QFrame):
             layout = QVBoxLayout(self.scrollContent)
             set_default_layout_params(layout)
 
-            image = SimpleImage(MipmapService().image_mipmap(self.image).path())
+            image = SimpleImage(MipmapService().image_mipmap(self.image))
             layout.addWidget(image, alignment=Qt.AlignmentFlag.AlignCenter)
 

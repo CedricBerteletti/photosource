@@ -9,16 +9,17 @@ import logging
 import os
 import shutil
 
-import services.settings as settings
 from services.singleton import SingletonMeta
-from services.mipmaps import DEFAULT_IMAGE_FORMAT, MipmapService
+from services.states.image_state import DEFAULT_IMAGE_FORMAT
 
 
 MAIN_SCRIPT_FILEPATH = os.path.join("processing", "main.py")
 PROCESS_DEFAULT_ID = "result"
 PROCESS_DEFAULT_TEMPLATE_PATH = os.path.join("processing", "templates", "template_process.py")
 
-TEMPLATE_SECTION = "####USER_COMMANDS_TO_REPLACE####"
+
+VERSION_TAG = "####PHOTOSOURCE VERSION"
+TEMPLATE_SECTION = "####PHOTOSOURCE ####USER_COMMANDS_TO_REPLACE####"
 LINE_SEP = "\n"
 
 

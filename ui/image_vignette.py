@@ -11,7 +11,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QGridLayout
 
 from services.mipmaps import MipmapService, MipmapLevels
-from services.states import ImageState
+from services.states.image_state import ImageState, DEFAULT_IMAGE_FORMAT
 from ui.image_simple import SimpleImage
 from ui.ui_utils import set_default_layout_params
 
@@ -23,13 +23,14 @@ class ImageVignette(QWidget):
         super().__init__()
         self.image = copy.copy(image)
         self.image.mipmap = MipmapLevels.VIGNETTE
-        self.init_ui()        
+        self.image.format = DEFAULT_IMAGE_FORMAT
+        self.init_ui()
 
 
     def init_ui(self):        
-        layout = QGridLayout(self)        
+        layout = QGridLayout(self)
         set_default_layout_params(layout)
-        vignette = SimpleImage(MipmapService().image_mipmap(self.image).path())
+        vignette = SimpleImage(MipmapService().image_mipmap(self.image))
         layout.addWidget(vignette, 0, 0, alignment=Qt.AlignmentFlag.AlignHCenter)
 
 

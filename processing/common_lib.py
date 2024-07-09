@@ -6,7 +6,6 @@ Main library of functions for processing an image
 
 import cv2 as cv
 from enum import Enum
-import numpy as np
 
 
 OpenCvFormats = Enum("OpenCvFormats", ["RGB32", "HSV32"])
@@ -41,19 +40,6 @@ class ImageProcessed():
         else:
             raise Exception("Unknown image data format", "")
         return self
-
-
-def write_image(img, filepath, format, errors):
-    # Writing image with OpenCV
-    if format == "jpg":
-        params = [cv.IMWRITE_JPEG_QUALITY, 100]
-    elif format == "tif":
-        params = []
-    else:
-        params = []
-    if not cv.imwrite(filepath, img.rgb32().data.astype(np.int16), params):
-        errors.append(f"Unable to write image {filepath}")
-    return errors
 
 
 def preview(img, name="", group=""):

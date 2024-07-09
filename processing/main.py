@@ -12,7 +12,9 @@ import numpy as np
 import os
 import sys
 
-from common_lib import ImageProcessed, write_image
+
+from common_io import load_image, write_image
+from common_lib import ImageProcessed
 
 
 def main(argv):
@@ -37,7 +39,7 @@ def main(argv):
 
     if cv.haveImageReader(source_image_path):
         # Open image with OpenCV
-        img = ImageProcessed(cv.imread(source_image_path).astype(np.float32))
+        img = ImageProcessed(load_image(source_image_path))
         
         source_filename = os.path.basename(source_image_path)
         source_filename_without_ext, source_ext = os.path.splitext(source_filename)
@@ -55,7 +57,7 @@ def main(argv):
         process = getattr(custom_module, "process")
         res = process(img)
 
-        return write_image(res, os.path.join(dest_folder_path, dest_filename), format, errors)
+        return write_image(res.rgb32().data, os.path.join(dest_folder_path, dest_filename), format, errors)
     else:
         errors.append(f"{source_image_path} isn't a recognized image format")
         return errors

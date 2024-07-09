@@ -9,12 +9,14 @@ from datetime import datetime
 import logging
 import platform
 import sys
+from time import sleep
 
 from PyQt6.QtGui import QPalette, QColor, QColorConstants
 from PyQt6.QtWidgets import QApplication
 
 import services.internationalization as int
 import services.settings as settings
+from services.tasks_manager import TasksManager
 from ui.main_window import MainWindow
 
 
@@ -26,6 +28,8 @@ def make_dpi_aware():
 
 
 def main(argv):
+
+    TasksManager().start()
 
     # QT - Interface graphique
     make_dpi_aware()
@@ -63,6 +67,10 @@ def main(argv):
 
     # Start the event loop.
     app.exec()
+
+    # Stopping
+    TasksManager().stop()
+    TasksManager().join()
 
 
 settings.init()

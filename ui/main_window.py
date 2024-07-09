@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import QMainWindow, QDockWidget
 
 import services.settings as settings
 from services.internationalization import l
-from ui.folder_explorer import FolderExplorer
+from ui.source_images_explorer import SourceImagesExplorer
 from ui.previews_explorer import PreviewsExplorer
 from ui.process_editor import ProcessEditor
 from ui.image_explorer import ImageExplorer
@@ -31,23 +31,19 @@ class MainWindow(QMainWindow):
         #self.setCorner(Qt.Corner.BottomRightCorner, Qt.DockWidgetArea.RightDockWidgetArea)
 
         # Source folder images explorer
-        self.folderExplorerWidget = QDockWidget(l("msg.folder_explorer"), self)
-        self.folderExplorerWidget.setWidget(FolderExplorer())
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.folderExplorerWidget)
+        self.sourceImagesExplorerWidget = self.create_dock_widget(l("msg.folder_explorer"), SourceImagesExplorer())
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.sourceImagesExplorerWidget)
 
         # Preview images explorer
-        self.previewsExplorerWidget = QDockWidget(l("msg.previews_explorer"), self)
-        self.previewsExplorerWidget.setWidget(PreviewsExplorer())
+        self.previewsExplorerWidget = self.create_dock_widget(l("msg.previews_explorer"), PreviewsExplorer())
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.previewsExplorerWidget)
         
         # Process editor
-        self.processEditorWidget = QDockWidget(l("msg.process_editor"), self)
-        self.processEditorWidget.setWidget(ProcessEditor())
+        self.processEditorWidget = self.create_dock_widget(l("msg.process_editor"), ProcessEditor())
         self.addDockWidget(Qt.DockWidgetArea.TopDockWidgetArea, self.processEditorWidget)
 
         # Status bar
-        self.statusBarWidget = QDockWidget(None, self)
-        self.statusBarWidget.setWidget(StatusBar())
+        self.statusBarWidget = self.create_dock_widget(None, StatusBar())
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.statusBarWidget)
 
         # Main image explorer
@@ -56,12 +52,19 @@ class MainWindow(QMainWindow):
 
         # Signals
         # Selecting a vignette
-        self.folderExplorerWidget.widget().imageSelected.connect(self.processEditorWidget.widget().set_image)
-        self.folderExplorerWidget.widget().imageSelected.connect(self.previewsExplorerWidget.widget().set_image)
-        self.folderExplorerWidget.widget().imageSelected.connect(self.main_widget.set_image)
+        self.sourceImagesExplorerWidget.widget().imageSelected.connect(self.processEditorWidget.widget().set_image)
+        self.sourceImagesExplorerWidget.widget().imageSelected.connect(self.previewsExplorerWidget.widget().set_image)
+        self.sourceImagesExplorerWidget.widget().imageSelected.connect(self.main_widget.set_image)
 
         # Selecting a preview
         # TODO
+
+    def create_dock_widget(self, title, insideWidget):
+        dw = QDockWidget(title, self)
+        dw.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetFloatable |
+                       QDockWidget.DockWidgetFeature.DockWidgetMovable)
+        dw.setWidget(insideWidget)
+        return dw
 
 
 
